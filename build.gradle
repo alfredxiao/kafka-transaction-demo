@@ -22,11 +22,19 @@ repositories {
 }
 
 dependencies {
+
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+	testCompileOnly 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
 	implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '2.6.1'
 	implementation group: 'org.apache.avro', name: 'avro', version: '1.10.2'
 	implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '6.1.0'
 	implementation group: 'io.confluent', name: 'kafka-schema-serializer', version: '6.1.0'
 	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.13'
+	implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.11'
 }
 
 test {
