@@ -2,6 +2,7 @@ package xiaoyf.demo.kafka.transaction.transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.ProducerFencedException;
@@ -135,8 +136,9 @@ public class SimpleTransactionalProducer {
         producerProps.put(KEY_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class);
         producerProps.put(VALUE_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class);
 
-        // implies idempotence mode?
-        producerProps.put("transactional.id", "simple-transactional-producer");
+        // implies idempotence mode? -> YES, 'enable.idempotence' set to 'true' automatically,
+        //                              and it CANNOT be set to 'false' actually
+        producerProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "simple-transactional-producer");
 
         return new KafkaProducer<>(producerProps);
     }
