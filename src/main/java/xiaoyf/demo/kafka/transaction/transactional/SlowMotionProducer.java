@@ -16,17 +16,13 @@ import static xiaoyf.demo.kafka.transaction.Constants.SINGLE_TRANSACTIONAL_PRODU
 /**
  * SimpleTransactionSlowMotionProducer demonstrate corresponding interaction with broker side (by comments though :).
  * Tools used to monitor what's happending on broker side:
- * <code>kafka-console-consumer --consumer-property "exclude.internal.topics":"false" --topic __transaction_state
- * --bootstrap-server localhost:9092 --formatter
- * "kafka.coordinator.transaction.TransactionLog\$TransactionLogMessageFormatter"</code>
- * <code>kafka-console-consumer --consumer-property "isolation.level"="read_uncommitted"
- * --topic single-transactional-producer --bootstrap-server localhost:9092</code>
- * <code>kafka-console-consumer --consumer-property "isolation.level"="read_committed"
- * --topic single-transactional-producer --bootstrap-server localhost:9092</code>
+ * <code>kafka-console-consumer --consumer-property "exclude.internal.topics":"false" --topic __transaction_state --bootstrap-server localhost:9092 --formatter "kafka.coordinator.transaction.TransactionLog\$TransactionLogMessageFormatter"</code>
+ * <code>kafka-console-consumer --consumer-property "isolation.level"="read_uncommitted" --topic single-transactional-producer --bootstrap-server localhost:9092</code>
+ * <code>kafka-console-consumer --consumer-property "isolation.level"="read_committed" --topic single-transactional-producer --bootstrap-server localhost:9092</code>
  * <code>kafka-dump-log --files 00000000000000000000.log --print-data-log</code>
  */
 @Slf4j
-public class SimpleTransactionSlowMotionProducer {
+public class SlowMotionProducer {
     static final long TEN_SECOND = 10000L;
 
     public static void main(String[] args) throws Exception {
