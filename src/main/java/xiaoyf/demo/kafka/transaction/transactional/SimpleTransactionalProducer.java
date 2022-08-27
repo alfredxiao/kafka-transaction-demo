@@ -25,7 +25,7 @@ public class SimpleTransactionalProducer {
     public static void main(String[] args) throws Exception {
         KafkaProducer<String, String> producer = createProducer();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: UNINITIALIZED,
                 transactionStarted: false,
@@ -38,7 +38,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.initTransactions();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: READY,
                 transactionStarted: false,
@@ -51,7 +51,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.beginTransaction();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: IN_TRANSACTION,
                 transactionStarted: false,
@@ -64,7 +64,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v1")).get();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: IN_TRANSACTION,
                 transactionStarted: true,
@@ -77,7 +77,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.commitTransaction();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: READY,
                 transactionStarted: false,
@@ -90,7 +90,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.beginTransaction();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: IN_TRANSACTION,
                 transactionStarted: false,
@@ -103,7 +103,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k2", "v2")).get();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: IN_TRANSACTION,
                 transactionStarted: true,
@@ -116,7 +116,7 @@ public class SimpleTransactionalProducer {
            } */
         producer.commitTransaction();
         /*  producer: {
-              clientId: producer-simple-transactional-producer,
+              clientId: producer-simple-tx,
               transactionManager: {
                 currentState: READY,
                 transactionStarted: false,
@@ -128,6 +128,14 @@ public class SimpleTransactionalProducer {
               }
            } */
         producer.close();
+
+        producer = createProducer();
+        producer.initTransactions();
+        // producer.transactionManager.producerIdAndEpoch: { producerId: 2, epoch: 28 }
+        producer.beginTransaction();
+        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k3", "v3")).get();
+        producer.commitTransaction();
+        producer.close();
     }
 
     private static KafkaProducer<String, String> createProducer() {
@@ -138,7 +146,7 @@ public class SimpleTransactionalProducer {
 
         // implies idempotence mode? -> YES, 'enable.idempotence' set to 'true' automatically,
         //                              and it CANNOT be set to 'false' actually
-        producerProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "simple-transactional-producer");
+        producerProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "simple-tx");
 
         return new KafkaProducer<>(producerProps);
     }
