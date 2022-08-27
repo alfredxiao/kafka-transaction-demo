@@ -17,7 +17,7 @@ import static xiaoyf.demo.kafka.transaction.Constants.BOOTSTRAP_SERVERS;
 import static xiaoyf.demo.kafka.transaction.Constants.SINGLE_TRANSACTIONAL_PRODUCER_TOPIC;
 
 /**
- * SimpleTransactionalProducer demonstrates
+ * SimpleTransactionalProducer demonstrates how transaction state changes from the producer's perspective.
  */
 @Slf4j
 public class SimpleTransactionalProducer {
