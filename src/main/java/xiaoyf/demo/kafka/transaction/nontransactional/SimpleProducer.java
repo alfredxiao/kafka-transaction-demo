@@ -9,8 +9,8 @@ import java.util.Properties;
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
-import static xiaoyf.demo.kafka.transaction.Constants.BOOTSTRAP_SERVERS;
-import static xiaoyf.demo.kafka.transaction.Constants.SINGLE_TRANSACTIONAL_PRODUCER_TOPIC;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.TRANSACTION_DEMO_TOPIC;
 
 @Slf4j
 public class SimpleProducer {
@@ -21,7 +21,7 @@ public class SimpleProducer {
               clientId: producer-1,
               transactionManager: null
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v1")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k1", "simple-message-1")).get();
         /*  producer: {
               clientId: producer-1,
               transactionManager: null
@@ -32,7 +32,7 @@ public class SimpleProducer {
               clientId: producer-2,
               transactionManager: null
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v1")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k2", "simple-message-2")).get();
         /*  producer: {
               clientId: producer-2,
               transactionManager: null
@@ -48,5 +48,8 @@ public class SimpleProducer {
 
         return new KafkaProducer<>(producerProps);
     }
-
 }
+
+/* NOTE
+  1. No transactionManager, no producerId are involved
+ */

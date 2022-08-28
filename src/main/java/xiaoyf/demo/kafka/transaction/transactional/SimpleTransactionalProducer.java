@@ -4,17 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.errors.ProducerFencedException;
 
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
-import static xiaoyf.demo.kafka.transaction.Constants.BOOTSTRAP_SERVERS;
-import static xiaoyf.demo.kafka.transaction.Constants.SINGLE_TRANSACTIONAL_PRODUCER_TOPIC;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.TRANSACTION_DEMO_TOPIC;
 
 /**
  * SimpleTransactionalProducer demonstrates how transaction state changes from the producer's perspective.
@@ -62,7 +59,7 @@ public class SimpleTransactionalProducer {
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v1")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k1", "transactional-message-1")).get();
         /*  producer: {
               clientId: producer-simple-tx,
               transactionManager: {
@@ -101,7 +98,7 @@ public class SimpleTransactionalProducer {
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k2", "v2")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k2", "transactional-message-2")).get();
         /*  producer: {
               clientId: producer-simple-tx,
               transactionManager: {
@@ -133,7 +130,7 @@ public class SimpleTransactionalProducer {
         producer.initTransactions();
         // producer.transactionManager.producerIdAndEpoch: { producerId: 2, epoch: 28 }
         producer.beginTransaction();
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k3", "v3")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k3", "transactional-message-3")).get();
         producer.commitTransaction();
         producer.close();
     }
@@ -150,5 +147,11 @@ public class SimpleTransactionalProducer {
 
         return new KafkaProducer<>(producerProps);
     }
-
 }
+
+/* NOTE
+  1. beginTransaction does not really start a transaction, it only marks a transaction is ready to start; send()
+     actually starts a transaction - start of a transaction is of importance as it relates to transaction timeout
+     calculation, by default 60 seconds after the start
+  2. The same producer (same transactional.id) gets a bumped epoch when it reconnects
+ */

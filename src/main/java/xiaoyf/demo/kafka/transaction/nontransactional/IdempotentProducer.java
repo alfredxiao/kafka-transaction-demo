@@ -4,17 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.errors.ProducerFencedException;
 
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
-import static xiaoyf.demo.kafka.transaction.Constants.BOOTSTRAP_SERVERS;
-import static xiaoyf.demo.kafka.transaction.Constants.SINGLE_TRANSACTIONAL_PRODUCER_TOPIC;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.TRANSACTION_DEMO_TOPIC;
 
 @Slf4j
 public class IdempotentProducer {
@@ -31,7 +28,7 @@ public class IdempotentProducer {
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v1")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k1", "idempotent-message-1")).get();
         /*  producer: {
               clientId: producer-1,
               transactionManager: {
@@ -56,7 +53,7 @@ public class IdempotentProducer {
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(SINGLE_TRANSACTIONAL_PRODUCER_TOPIC, "k1", "v2")).get();
+        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k2", "idempotent-message-2")).get();
         /*  producer: {
               clientId: producer-2,
               transactionManager: {
@@ -85,5 +82,10 @@ public class IdempotentProducer {
 
         return new KafkaProducer<>(producerProps);
     }
-
 }
+
+/* NOTE
+  1. Nothing observed from __transaction_state topic.
+  2. Consumers with read_uncommitted and read_committed see the messages at the same time
+  3. transactionManager is involved, producerId is associated with a producer
+ */
