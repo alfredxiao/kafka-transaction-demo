@@ -12,11 +12,10 @@ import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CON
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.TRANSACTION_DEMO_TOPIC;
 
 @Slf4j
 public class ZombieFencingDemo {
-
-    final static String TOPIC = Constants.ONE_TX_AND_ONE_NON_TX_PRODUCER_TOPIC;
 
     public static void main(String[] args) throws Exception {
         fencedOffWhenSendingToo();
@@ -28,14 +27,14 @@ public class ZombieFencingDemo {
 
             txProducer1.initTransactions(); // -> triggers a state=Empty, with producerId, producerEpoch
             txProducer1.beginTransaction();
-            txProducer1.send(new ProducerRecord<>(TOPIC, "t1", "t1")).get();  // starts tx, state=Ongoing
+            txProducer1.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t1", "t1")).get();  // starts tx, state=Ongoing
 
                 txProducer2.initTransactions(); // receives same producerId, but producerEpoch+1, then triggers
                                                 // a state=PrepareAbort and a state=CompleteAbort
                                                 // ALSO, receives same producerId, but producerEpoch+2, then triggers
                                                 // a state=Empty
                 txProducer2.beginTransaction();
-                txProducer2.send(new ProducerRecord<>(TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
+                txProducer2.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
                 txProducer2.commitTransaction(); // triggers state=PrepareCommit & state=CompleteCommit
 
             txProducer1.commitTransaction(); // receives a ProducerFencedException
@@ -54,10 +53,10 @@ public class ZombieFencingDemo {
                 txProducer2.initTransactions(); // receives same producerId, but producerEpoch+1, then triggers
                                                 // a state=Empty
                 txProducer2.beginTransaction();
-                txProducer2.send(new ProducerRecord<>(TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
+                txProducer2.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
                 txProducer2.commitTransaction(); // triggers state=PrepareCommit & state=CompleteCommit
 
-            txProducer1.send(new ProducerRecord<>(TOPIC, "t1", "t1")).get();  // receives a ProducerFencedException
+            txProducer1.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t1", "t1")).get();  // receives a ProducerFencedException
             txProducer1.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,11 +72,11 @@ public class ZombieFencingDemo {
                 txProducer2.initTransactions(); // receives same producerId, but producerEpoch+1, then triggers
                                                 // a state=Empty
                 txProducer2.beginTransaction();
-                txProducer2.send(new ProducerRecord<>(TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
+                txProducer2.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t2", "t2")).get(); // triggers state=Ongoing
                 txProducer2.commitTransaction(); // triggers state=PrepareCommit & state=CompleteCommit
 
             txProducer1.beginTransaction();
-            txProducer1.send(new ProducerRecord<>(TOPIC, "t1", "t1")).get();  // receives a ProducerFencedException
+            txProducer1.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "t1", "t1")).get();  // receives a ProducerFencedException
             txProducer1.commitTransaction();
         } catch (Exception e) {
             e.printStackTrace();

@@ -154,4 +154,6 @@ public class SimpleTransactionalProducer {
      actually starts a transaction - start of a transaction is of importance as it relates to transaction timeout
      calculation, by default 60 seconds after the start
   2. The same producer (same transactional.id) gets a bumped epoch when it reconnects
+  3. The same producer can start multiple transactions which are associated with same producerId and epoch. These
+     transactions do not have their own transaction id, as transactional id is NOT transaction id
  */

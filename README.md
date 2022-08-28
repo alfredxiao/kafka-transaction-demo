@@ -10,6 +10,7 @@ multiple partition commit
 how tx id is formed in streaming apps
 a topology has two input topics, how is the tx id formed
 what will happen next if a streaming app instance is fenced off
+TransactionAbortedTransaction?
 
 tx consumer
 non-tx consumer
