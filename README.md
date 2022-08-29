@@ -1,24 +1,21 @@
-single tx writer
-single tx writer+single non-tx writer
-single tx writer+another tx writer
-idempotent write requires a topic?
- - idempotence mode on and off, does producer.transaction.producerIdandEpoch exhibit any diff
-what if aborted
-timed out 
-commit offset as well
-multiple partition commit
-how tx id is formed in streaming apps
-a topology has two input topics, how is the tx id formed
-what will happen next if a streaming app instance is fenced off
-TransactionAbortedTransaction?
-
-tx consumer
-non-tx consumer
-
-ProducerFencedException (https://tgrez.github.io/posts/2019-04-13-kafka-transactions.html)
-tx timeout
-
-does streaming app instances (using same app-id) use the same transactional-id or?
+# Features
+- single tx writer
+- interleaved: tx writer + non-tx writer + another tx writer
+- idempotent writer
+- transaction abort
+- transaction timed out
+- [todo] commit offset as well
+- [todo] multiple partition commit
+- [todo] how tx id is formed in streaming apps
+  - a topology has two input topics, how is the tx id formed
+  - does streaming app instances (using same app-id) use the same transactional-id or?
+- [todo] commit interval, or batch size in streaming app
+  - how sparse or dense are tx markers in the output topic?
+- [todo] does and how does rocksdb participate in exactly-once semantics
+- [todo] what will happen next if a streaming app instance is fenced off
+- [todo] TransactionAbortedTransaction?
+- Zombie Fencing & ProducerFencedException (ref: https://tgrez.github.io/posts/2019-04-13-kafka-transactions.html)
+- observed results from `__transaction_state` and tx markers
 
 # Value of Kafka Transaction
 ## Prevent Reprocessing
@@ -29,19 +26,16 @@ In distributed environments, applications will crash or—worse!—temporarily l
 
 # Consumer
 ## read_uncommitted (default)
-sees everything records no matter of whether transaction is committed or aborted?
+- sees all records despite transactional or not, committed, or aborted
+- sees all records instantly (by producer via `send()` and its sending job), no need to wait for tx marker
 
 ## read_committed
-1. read only committed transactional messages
-2. read non-transactional messages that appear after committed transactional messages 
+1. reads only committed transactional messages
+2. reads non-transactional messages if earlier messages are readable
+3. read records in the order of they were sent (via `send()`), not the order of they were committed
 
-# Commit Marker & Offsets
-- not for record count when TX are there
-
-# Kafka Patterns 
-Dedupe!
-
-# Kafka Rebalancing
+# Transaction Marker & Offsets
+- With tx marker's existence, offset is not appropriate for record count of a topic
 
 # Commands to monitor broker side 
 1. Monitor `__transaction_state` topic

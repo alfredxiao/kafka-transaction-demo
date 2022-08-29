@@ -57,4 +57,6 @@ public class InterleavedTransactions {
   1. Consumer read_committed only read committed records - which means uncommitted transactions keeps all records
      written after from being consumed, no matter they are written by non-transactional producer or another
      transactional producer
+  2. Messages read by read_committed consumer are in the order they were sent (via send()), not the order they are
+     committed.
  */
