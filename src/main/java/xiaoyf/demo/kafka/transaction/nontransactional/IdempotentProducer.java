@@ -11,7 +11,7 @@ import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CON
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
-import static xiaoyf.demo.kafka.transaction.helper.Constants.TRANSACTION_DEMO_TOPIC;
+import static xiaoyf.demo.kafka.transaction.helper.Constants.IDEMPOTENT_TOPIC;
 
 @Slf4j
 public class IdempotentProducer {
@@ -28,12 +28,13 @@ public class IdempotentProducer {
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k1", "idempotent-message-1")).get();
+        producer.send(new ProducerRecord<>(IDEMPOTENT_TOPIC, "k1", "idempotent-message-1")).get();
         /*  producer: {
               clientId: producer-1,
               transactionManager: {
                 currentState: READY,
                 transactionStarted: false,
+                transactionCoordinator: null,
                 producerIdAndEpoch: {
                   producerId=9, epoch=0
                 }
@@ -47,18 +48,20 @@ public class IdempotentProducer {
               transactionManager: {
                 currentState: INITIALIZING,
                 transactionStarted: false,
+                transactionCoordinator: null,
                 producerIdAndEpoch: {
                   producerId: -1,
                   epoch: -1
                 }
               }
            } */
-        producer.send(new ProducerRecord<>(TRANSACTION_DEMO_TOPIC, "k2", "idempotent-message-2")).get();
+        producer.send(new ProducerRecord<>(IDEMPOTENT_TOPIC, "k2", "idempotent-message-2")).get();
         /*  producer: {
               clientId: producer-2,
               transactionManager: {
                 currentState: READY,
                 transactionStarted: false,
+                transactionCoordinator: null,
                 producerIdAndEpoch: {
                   producerId: 10,
                   epoch: 0
@@ -87,5 +90,6 @@ public class IdempotentProducer {
 /* NOTE
   1. Nothing observed from __transaction_state topic.
   2. Consumers with read_uncommitted and read_committed see the messages at the same time
-  3. transactionManager is involved, producerId is associated with a producer
+  3. transactionManager (in client side) is involved, producerId is associated with a producer
+  4. a transactionCoordinator (on broker side) is NOT involved
  */
