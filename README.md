@@ -2,6 +2,13 @@
 - single tx writer
 - interleaved: tx writer + non-tx writer + another tx writer
 - idempotent writer
+  - message request consists of sequence number?
+  - how is producerId determined (by broker?) where is the producerId pool/max stored?
+  - producer assigned a epoch?
+  - why inflight=5
+- transactional producer
+  - max.in.flight set to 5
+  - enable idempotence
 - transaction abort
 - transaction timed out
 - [todo] commit offset as well
