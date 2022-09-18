@@ -5,7 +5,7 @@ public interface Constants {
 
     String NON_IDEMPOTENT_TOPIC = "non-idempotent-demo";
     String IDEMPOTENT_TOPIC = "idempotent-demo";
-    String IDEMPOTENT_BATCH_TOPIC = "idempotent-batch-demo";
     String TRANSACTION_DEMO_TOPIC = "transaction-demo";
-    String ONE_TX_AND_ONE_NON_TX_PRODUCER_TOPIC = "one-tx-and-one-non-tx-producer";
+    String OFFSET_DEMO_INPUT_TOPIC = "offset-demo-input";
+    String OFFSET_DEMO_OUTPUT_TOPIC = "offset-demo-output";
 }

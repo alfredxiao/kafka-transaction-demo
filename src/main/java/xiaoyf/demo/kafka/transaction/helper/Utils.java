@@ -7,7 +7,7 @@ import java.util.Random;
 @UtilityClass
 public class Utils {
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     public static void nap() {
         try {
