@@ -11,7 +11,7 @@
   - enable idempotence
 - transaction abort
 - transaction timed out
-- [todo] commit offset as well
+- commit offset as well
 - [todo] multiple partition commit
 - [todo] how tx id is formed in streaming apps
   - a topology has two input topics, how is the tx id formed

@@ -32,13 +32,12 @@ public class TransactionalOffsetDemo {
     private final static String GROUP_ID = "offset-demo-consumer-group";
 
     public static void main(String[] args) throws Exception {
+
         KafkaProducer<String, String> producer = createProducer();
+        KafkaConsumer<String, String> consumer = createConsumer();
+        consumer.subscribe(singleton(OFFSET_DEMO_INPUT_TOPIC));
 
         producer.initTransactions();
-
-        KafkaConsumer<String, String> consumer = createConsumer();
-
-        consumer.subscribe(singleton(OFFSET_DEMO_INPUT_TOPIC));
 
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
