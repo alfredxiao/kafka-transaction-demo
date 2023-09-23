@@ -7,13 +7,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import java.util.Properties;
 
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 import static xiaoyf.demo.kafka.transaction.helper.Constants.BOOTSTRAP_SERVERS;
 import static xiaoyf.demo.kafka.transaction.helper.Constants.NON_IDEMPOTENT_TOPIC;
 
 @Slf4j
-public class SimpleProducer {
+public class NonIdempotentProducer {
 
     public static void main(String[] args) throws Exception {
         KafkaProducer<String, String> producer = createProducer();
@@ -47,6 +48,7 @@ public class SimpleProducer {
         producerProps.put(BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         producerProps.put(KEY_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class);
         producerProps.put(VALUE_SERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringSerializer.class);
+        producerProps.put(ENABLE_IDEMPOTENCE_CONFIG, "false");
 
         return new KafkaProducer<>(producerProps);
     }
